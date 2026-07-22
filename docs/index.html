@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네이버 금융 ETF 실시간 EDA 대시보드</title>
+    <meta name="description" content="네이버 금융 실시간 시가총액순 ETF API 데이터를 활용한 정적 EDA 분석 및 시각화 대시보드입니다.">
+    <meta name="keywords" content="ETF, 네이버금융, EDA, 주식, 투자, 시가총액, 수익률, 대시보드, Plotly">
+    
+    <!-- CSS & Fonts -->
+    <link rel="stylesheet" href="./css/style.css">
+    
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header>
+            <div class="brand">
+                <div class="brand-icon">📈</div>
+                <div class="brand-title">
+                    <h1>네이버 ETF 실시간 EDA 대시보드</h1>
+                    <p>Naver Finance ETF Market Analytics & Interactive Dashboard</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="last-update">
+                    <span>마지막 갱신: </span>
+                    <strong id="updatedAt">-</strong>
+                </div>
+                <button id="refreshBtn" class="btn-refresh" title="데이터 새로고침">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span>새로고침</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- KPI Cards Grid -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span>총 상장 ETF 종목</span>
+                    <span>📊</span>
+                </div>
+                <div class="kpi-value" id="kpiTotalCount">-</div>
+                <div class="kpi-subtext">네이버 금융 기준 전종목</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span>전체 시가총액</span>
+                    <span>💰</span>
+                </div>
+                <div class="kpi-value" id="kpiTotalMarketSum">-</div>
+                <div class="kpi-subtext">전체 ETF 합산 시가총액</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span>상승 종목</span>
+                    <span>🔺</span>
+                </div>
+                <div class="kpi-value text-up" id="kpiUpCount">-</div>
+                <div class="kpi-subtext">전일 대비 등락률 > 0%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span>하락 종목</span>
+                    <span>🔹</span>
+                </div>
+                <div class="kpi-value text-down" id="kpiDownCount">-</div>
+                <div class="kpi-subtext">전일 대비 등락률 &lt; 0%</div>
+            </div>
+        </section>
+
+        <!-- Charts Grid -->
+        <section class="charts-grid">
+            <div class="chart-card">
+                <div class="card-title">
+                    <span>🏆 시가총액 상위 12개 ETF</span>
+                </div>
+                <div id="chartMarketCap" class="chart-container"></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="card-title">
+                    <span>🔥 3개월 수익률 Top 10</span>
+                </div>
+                <div id="chartPerformance" class="chart-container"></div>
+            </div>
+
+            <div class="chart-card full-width">
+                <div class="card-title">
+                    <span>💡 거래대금 vs 등락률 상관관계 (시가총액 상위 100개)</span>
+                </div>
+                <div id="chartScatter" class="chart-container"></div>
+            </div>
+        </section>
+
+        <!-- Interactive Data Table Card -->
+        <section class="table-card">
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="ETF 종목명 또는 6자리 종목코드 검색...">
+                </div>
+
+                <div class="filter-tags">
+                    <button class="tag-btn active" data-tag="all">전체</button>
+                    <button class="tag-btn" data-tag="us">미국/해외</button>
+                    <button class="tag-btn" data-tag="tech">반도체/AI</button>
+                    <button class="tag-btn" data-tag="battery">2차전지</button>
+                    <button class="tag-btn" data-tag="bond">채권/금리</button>
+                    <button class="tag-btn" data-tag="leverage">레버리지</button>
+                    <button class="tag-btn" data-tag="inverse">인버스</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="itemcode">종목코드</th>
+                            <th data-sort="itemname">종목명</th>
+                            <th data-sort="nowVal">현재가</th>
+                            <th data-sort="changeRate">등락률</th>
+                            <th data-sort="marketSum">시가총액</th>
+                            <th data-sort="quant">거래량</th>
+                            <th data-sort="amonut">거래대금</th>
+                            <th data-sort="threeMonthEarnRate">3개월수익률</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- JS Dynamic Insertion -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <span id="pageInfo">1 / 1 페이지</span>
+                <div class="pagination-controls">
+                    <button id="btnPrevPage" class="btn-page" disabled>이전</button>
+                    <button id="btnNextPage" class="btn-page">다음</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Application Script -->
+    <script src="./js/app.js"></script>
+</body>
+</html>

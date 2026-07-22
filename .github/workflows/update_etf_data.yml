@@ -1,0 +1,42 @@
+name: Update ETF Data for GitHub Pages
+
+on:
+  schedule:
+    # 매일 6시간마다 자동 데이터 수집 (UTC 기준 0, 6, 12, 18시)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # 수동 실행 지원
+
+jobs:
+  update-etf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python & uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system requests
+
+      - name: Run ETF Data Fetcher
+        run: |
+          python scripts/fetch_etf_data.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/etf_latest.json
+          if git diff --staged --quiet; then
+            echo "No changes in ETF data."
+          else
+            git commit -m "chore: auto update ETF dataset [skip ci]"
+            git push
+          fi
