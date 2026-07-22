@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# C extensions
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Data & Output files (Don't push heavy data or log files)
+data/*.csv
+data/*.xlsx
+data/*.parquet
+data/*.json
+!data/.gitkeep
+*.log
+
+# Scratch & Temporary files
+scratch/
+.scratch/
+
+# Environment variables & Credentials
+.env
+.env.*
+!.env.example
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
