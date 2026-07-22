@@ -144,12 +144,16 @@ function applyFilters(searchKeyword = '') {
         if (!matchesKw) return false;
 
         if (currentTag === 'all') return true;
+        if (currentTag === 'domestic') return item.itemname.includes('코스피') || item.itemname.includes('코스닥') || item.itemname.includes('200') || item.itemname.includes('KOSEF 200') || item.itemname.includes('HANARO 200') || item.itemname.includes('KRX');
+        if (currentTag === 'us') return item.itemname.includes('미국') || item.itemname.includes('S&P500') || item.itemname.includes('나스닥') || item.itemname.includes('다우');
+        if (currentTag === 'tech') return item.itemname.includes('반도체') || item.itemname.includes('IT') || item.itemname.includes('AI') || item.itemname.includes('빅테크') || item.itemname.includes('테크');
+        if (currentTag === 'battery') return item.itemname.includes('2차전지') || item.itemname.includes('배터리') || item.itemname.includes('양극재');
+        if (currentTag === 'healthcare') return item.itemname.includes('바이오') || item.itemname.includes('헬스케어') || item.itemname.includes('제약') || item.itemname.includes('메디');
+        if (currentTag === 'dividend') return item.itemname.includes('고배당') || item.itemname.includes('배당') || item.itemname.includes('SCHD') || item.itemname.includes('타겟커버드') || item.itemname.includes('커버드콜');
+        if (currentTag === 'commodity') return item.itemname.includes('골드') || item.itemname.includes('금') || item.itemname.includes('선물') || item.itemname.includes('원유') || item.itemname.includes('구리') || item.itemname.includes('은') || item.itemname.includes('농산물') || item.itemname.includes('원자재');
+        if (currentTag === 'bond') return item.itemname.includes('채권') || item.itemname.includes('KOFR') || item.itemname.includes('CD금리') || item.itemname.includes('국채');
         if (currentTag === 'leverage') return item.itemname.includes('레버리지') || item.itemname.includes('2X');
-        if (currentTag === 'inverse') return item.itemname.includes('인버스') || item.itemname.includes('곱버스');
-        if (currentTag === 'bond') return item.itemname.includes('채권') || item.itemname.includes('KOFR') || item.itemname.includes('CD금리');
-        if (currentTag === 'tech') return item.itemname.includes('반도체') || item.itemname.includes('IT') || item.itemname.includes('AI') || item.itemname.includes('빅테크');
-        if (currentTag === 'battery') return item.itemname.includes('2차전지') || item.itemname.includes('배터리');
-        if (currentTag === 'us') return item.itemname.includes('미국') || item.itemname.includes('S&P500') || item.itemname.includes('나스닥');
+        if (currentTag === 'inverse') return item.itemname.includes('인버스') || item.itemname.includes('곱버스') || item.itemname.includes('-1X');
 
         return true;
     });
@@ -299,5 +303,30 @@ function renderCharts() {
         title: { text: '시가총액 상위 100개 ETF [거래대금 vs 등락률] (버블크기: 시가총액)', font: { color: '#f8fafc', size: 14 } },
         xaxis: { title: '거래대금 (백만 원)', gridcolor: 'rgba(255,255,255,0.06)' },
         yaxis: { title: '등락률 (%)', gridcolor: 'rgba(255,255,255,0.06)' }
+    }, { responsive: true, displayModeBar: false });
+
+    // 4. 시장 등락 분포 도넛 차트 (추가된 EDA 지표)
+    const upCount = etfData.filter(d => (d.changeRate || 0) > 0).length;
+    const downCount = etfData.filter(d => (d.changeRate || 0) < 0).length;
+    const flatCount = etfData.filter(d => (d.changeRate || 0) === 0).length;
+
+    const trace4 = {
+        values: [upCount, downCount, flatCount],
+        labels: ['상승', '하락', '보합'],
+        type: 'pie',
+        hole: 0.45,
+        marker: {
+            colors: ['#ef4444', '#3b82f6', '#64748b'] // 한국 증시 상승(Red) / 하락(Blue) / 보합(Gray) 반영
+        },
+        textinfo: 'percent+value',
+        hovertemplate: '<b>%{label}</b><br>종목 수: %{value} 개<br>비중: %{percent}<extra></extra>'
+    };
+
+    Plotly.newPlot('chartMarketDistribution', [trace4], {
+        ...themeLayout,
+        margin: { t: 30, r: 30, l: 30, b: 30 },
+        title: { text: '전체 ETF 시장 등락 종목 분포 (개, %)', font: { color: '#f8fafc', size: 14 } },
+        showlegend: true,
+        legend: { font: { color: '#94a3b8', size: 11 }, orientation: 'h', x: 0.5, y: -0.15, xanchor: 'center' }
     }, { responsive: true, displayModeBar: false });
 }

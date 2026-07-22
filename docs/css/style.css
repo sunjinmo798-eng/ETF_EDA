@@ -206,7 +206,7 @@ header {
     margin-top: 4px;
 }
 
-/* Charts Grid */
+/* Charts Grid (2x2 Balanced Layout) */
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
