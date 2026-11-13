@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13 08:10:03",
+  "updated_at": "2026-11-13 16:16:27",
   "total_count": 1188,
   "items": [
     {
@@ -6208,10 +6208,10 @@
       "itemcode": "0191W0",
       "etfTabCode": 6,
       "itemname": "HANARO 중기종합채권(A-이상)액티브",
-      "nowVal": 101905,
-      "risefall": "3",
-      "changeVal": 0,
-      "changeRate": 0.0,
+      "nowVal": 101870,
+      "risefall": "5",
+      "changeVal": -35,
+      "changeRate": -0.03,
       "nav": 101873.0,
       "threeMonthEarnRate": 1.0561,
       "quant": 0,
