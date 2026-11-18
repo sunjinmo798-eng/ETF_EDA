@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-18 09:11:02",
+  "updated_at": "2026-11-18 18:01:34",
   "total_count": 1190,
   "items": [
     {
@@ -12900,9 +12900,9 @@
       "itemcode": "363510",
       "etfTabCode": 6,
       "itemname": "SOL KIS단기통안채",
-      "nowVal": 112785,
-      "risefall": "3",
-      "changeVal": 0,
+      "nowVal": 112790,
+      "risefall": "2",
+      "changeVal": 5,
       "changeRate": 0.0,
       "nav": 112800.0,
       "threeMonthEarnRate": 0.6739,
